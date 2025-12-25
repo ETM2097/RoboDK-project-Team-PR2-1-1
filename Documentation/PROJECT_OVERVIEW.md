@@ -13,10 +13,11 @@ This project implements a coordinated system using two Universal Robots (UR10 an
 #### 1. UR10 Robot - Pick and Place System
 - **Location:** `/UR10_PickAndPlace/`
 - **Responsible:** Sergio
-- **Function:** Performs pick and place operations
+- **Function:** Performs pick and place operations and also implements the conveyors feeder logic
 - **Key Operations:**
   - Pick objects from designated positions
   - Place objects at target locations
+  - Coordinates with the conveyor feeder through handshake signals
   - Coordinate with UR5 through handshake signals
 
 #### 2. UR5 Robot - Box Folding and Conveyor System
@@ -24,7 +25,7 @@ This project implements a coordinated system using two Universal Robots (UR10 an
 - **Responsible:** Diego
 - **Function:** Folds boxes and places them on conveyor
 - **Key Operations:**
-  - Fold boxes using a 4-step sequence
+  - Fold boxes using the box-folder structure
   - Place folded boxes on conveyor belt
   - Coordinate with UR10 through handshake signals
 
@@ -34,32 +35,34 @@ This project implements a coordinated system using two Universal Robots (UR10 an
 - **Function:** Provides communication and synchronization between robots
 - **Key Features:**
   - Signal exchange (READY, COMPLETE, ERROR, WAITING)
-  - Thread-safe operations
-  - Timeout protection
-  - Status tracking
+  - Thread-safe operations (if possible still researching)
+  - Timeout protection (IF WE HAVE TIME)
+  - Status tracking (optional)
 
 ## Workflow
 
 ### Overall System Flow
 1. Both robots initialize and move to home positions
-2. UR10 signals READY to start operations
-3. UR10 performs pick operation
-4. UR10 waits for UR5 to be ready before placing
-5. UR10 places object and signals COMPLETE
-6. UR5 receives COMPLETE signal and begins folding
-7. UR5 folds box and signals READY
-8. UR5 places box on conveyor
-9. Cycle repeats
+2. Conveyor Feeder stars spawning
+3. UR10 signals WAIT for Conveyor feeder signal to set itself to READY
+4. UR5 starts folding if boxes are aviable
+5. UR5 places box on conveyor
+6. UR10 performs pick operation when READY
+7. UR10 waits for UR5 to be ready before placing
+8. UR5 place and signals READY when the box reaches UR10 position
+9. UR10 places object and signals COMPLETE
+10. Box loses tracking from both robots and goes to closing station for final modification
+11. Cycle repeats
 
 ### Synchronization Points
-- **Before UR10 Place:** UR10 waits for UR5 READY signal
-- **Before UR5 Fold:** UR5 waits for UR10 COMPLETE signal
+- **Before UR10 Place:** UR10 waits for Conveyor feeder READY signal for picking and UR5 READY signal for placing
+- **Before UR5 Fold:** UR5 waits for Sensor on Boxes to be ON
 
 ## Technology Stack
 - **Programming Language:** Python 3
 - **Robot Platform:** RoboDK
 - **Robot Models:** UR10, UR5 (Universal Robots)
-- **Communication:** Custom handshake protocol with threading
+- **Communication:** Custom handshake protocol with threading (maybe if not ParamSet() from RoboDK)
 
 ## Directory Structure
 ```
@@ -86,10 +89,9 @@ RoboDK-project-Team-PR2-1-1/
 
 ## Safety Considerations
 1. Both robots operate at safe speeds
-2. Timeout protection prevents indefinite waiting
-3. Error signals allow for fault detection and recovery
-4. Safe height movements prevent collisions
-5. Handshake protocol ensures no simultaneous access to shared workspace
+2. Timeout protection prevents indefinite waiting (optional)
+3. Error signals allow for fault detection and recovery (mandatory for debugging)
+4. Handshake protocol ensures no simultaneous access to shared workspace/material
 
 ## Testing
 Each component can be tested independently:
@@ -106,7 +108,7 @@ Each component can be tested independently:
 6. Implement collision detection and avoidance
 
 ## Contact Information
-- **Project Team:** Team PR2-1-1
+- **Project Leader:** Enric
 - **UR10 Developer:** Sergio
 - **UR5 Developer:** Diego
 - **Integration Reviewer:** Felix
