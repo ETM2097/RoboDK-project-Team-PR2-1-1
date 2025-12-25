@@ -9,7 +9,7 @@ This script is designed to run within RoboDK environment.
 """
 
 from robolink import *    # RoboDK API
-from robodk import *      # Robot toolbox
+from robodk import *      # Robot toolbox (includes transl, pause, etc.)
 import sys
 import os
 

@@ -9,7 +9,7 @@ Configuration parameters for the UR5 robot box folding and conveyor operations i
 class UR5Config:
     """Configuration class for UR5 robot"""
     
-    # Robot joint positions (in degrees or radians, adjust as needed)
+    # Robot joint positions in degrees
     # Home position as joint angles [J1, J2, J3, J4, J5, J6]
     HOME_JOINTS = [0, -90, -90, -90, 90, 0]
     
