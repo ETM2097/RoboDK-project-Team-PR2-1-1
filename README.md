@@ -1,7 +1,7 @@
 # RoboDK Project - Team PR2-1-1
 
 ## Project Description
-Working repository for Team PR2-1-1's RoboDK project featuring coordinated operation of UR10 and UR5 robots.
+Working repository for Team PR2-1-1's RoboDK project featuring coordinated operation of UR10 and UR5 robots using RoboDK simulation and control software.
 
 ## Team Members
 - **Sergio** - UR10 Pick and Place Programming
@@ -10,21 +10,21 @@ Working repository for Team PR2-1-1's RoboDK project featuring coordinated opera
 
 ## Project Structure
 
-### 🤖 Robot Programs
+### 🤖 Robot Programs (RoboDK Compatible)
 
 #### UR10_PickAndPlace/
 **Responsible:** Sergio  
-Program for UR10 robot to perform pick and place operations.
-- `ur10_program.py` - Main robot control program
+RoboDK program for UR10 robot to perform pick and place operations.
+- `ur10_program.py` - Main RoboDK robot control program
 - `ur10_config.py` - Configuration parameters
-- `README.md` - Documentation
+- `README.md` - Setup and documentation
 
 #### UR5_BoxFolding/
 **Responsible:** Diego  
-Program for UR5 robot to fold boxes and place them on the conveyor.
-- `ur5_program.py` - Main robot control program
+RoboDK program for UR5 robot to fold boxes and place them on the conveyor.
+- `ur5_program.py` - Main RoboDK robot control program
 - `ur5_config.py` - Configuration parameters
-- `README.md` - Documentation
+- `README.md` - Setup and documentation
 
 ### 🤝 Communication System
 
@@ -44,10 +44,117 @@ Shared documentation for team improvements and collaboration.
 
 ## Quick Start
 
-### Running Individual Robot Programs
+### Prerequisites
+- **RoboDK** software installed (download from https://robodk.com/)
+- Python 3.x
+- RoboDK API for Python (usually included with RoboDK installation)
 
-Test UR10 program:
+### Setting Up Your RoboDK Station
+
+#### For UR10 (Sergio):
+1. Open RoboDK
+2. Add a UR10 robot to your station (name it "UR10")
+3. Create the following targets:
+   - `UR10_PickTarget` - Pick location
+   - `UR10_PlaceTarget` - Place location
+4. Load `UR10_PickAndPlace/ur10_program.py` into RoboDK
+
+#### For UR5 (Diego):
+1. Open RoboDK
+2. Add a UR5 robot to your station (name it "UR5")
+3. Create the following targets:
+   - `UR5_Fold1_Bottom` - Folding position 1
+   - `UR5_Fold2_Left` - Folding position 2
+   - `UR5_Fold3_Right` - Folding position 3
+   - `UR5_Fold4_Top` - Folding position 4
+   - `UR5_ConveyorTarget` - Conveyor placement
+4. Load `UR5_BoxFolding/ur5_program.py` into RoboDK
+
+### Running Robot Programs in RoboDK
+
+**Option 1: Within RoboDK**
+1. Right-click on robot → Add Program → Python
+2. Load the program file (ur10_program.py or ur5_program.py)
+3. Double-click the program to run it
+
+**Option 2: From Command Line** (RoboDK must be running)
 ```bash
+# Run UR10 program
+python UR10_PickAndPlace/ur10_program.py
+
+# Run UR5 program
+python UR5_BoxFolding/ur5_program.py
+```
+
+### Testing Handshake System
+
+Test the handshake communication system independently:
+```bash
+python Handshake/handshake.py
+```
+
+## How It Works
+
+1. **UR10** performs pick and place operations using RoboDK targets
+2. **UR5** folds boxes and places them on the conveyor using RoboDK targets
+3. Both robots use **handshake signals** to coordinate timing
+4. The handshake system ensures simultaneous operation without conflicts
+
+## Workflow
+
+```
+UR10: Initialize → Signal READY → Pick → Place → Signal COMPLETE → Wait for UR5 → [Repeat]
+                                                          ↓
+UR5:  Initialize → Wait for UR10 COMPLETE → Fold → Signal READY → Conveyor → [Repeat]
+```
+
+## Documentation
+
+For detailed information, see:
+- [Project Overview](Documentation/PROJECT_OVERVIEW.md) - Complete system architecture
+- [Team Responsibilities](Documentation/TEAM_RESPONSIBILITIES.md) - Roles and tasks
+- [Handshake Protocol](Handshake/handshake_protocol.md) - Communication details
+- [Improvements Log](Documentation/IMPROVEMENTS.md) - Change tracking
+
+## Contributing
+
+Team members should:
+1. Set up their RoboDK station with required robots and targets
+2. Work on their assigned robot program
+3. Use the handshake module for robot coordination
+4. Document all improvements in `Documentation/IMPROVEMENTS.md`
+5. Test changes in RoboDK simulation before committing
+
+## Requirements
+- **RoboDK** (simulation and control software)
+- Python 3.x
+- RoboDK API for Python (robolink, robodk modules)
+
+## Project Status
+
+- [x] Project structure created
+- [x] UR10 RoboDK program template created with API integration
+- [x] UR5 RoboDK program template created with API integration
+- [x] Handshake communication system implemented
+- [x] Documentation framework established
+- [ ] UR10 RoboDK station setup and testing by Sergio
+- [ ] UR5 RoboDK station setup and testing by Diego
+- [ ] Handshake system reviewed by Felix
+- [ ] Integration testing in RoboDK completed
+- [ ] Final documentation completed
+
+## Notes
+
+- All robot programs use the official RoboDK API (`robolink` and `robodk` modules)
+- Programs are designed to run both within RoboDK and from command line
+- Targets and robot names in your RoboDK station must match the configuration files
+- Customize `ur10_config.py` and `ur5_config.py` to match your station setup
+
+## License
+Team PR2-1-1 Project
+
+## Contact
+For questions, refer to [Team Responsibilities](Documentation/TEAM_RESPONSIBILITIES.md) for appropriate team member contacts.
 python UR10_PickAndPlace/ur10_program.py
 ```
 

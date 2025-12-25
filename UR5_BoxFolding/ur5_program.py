@@ -2,10 +2,14 @@
 UR5 Box Folding and Conveyor Program
 Responsible: Diego
 
-This program controls the UR5 robot for box folding operations
+This RoboDK program controls the UR5 robot for box folding operations
 and placing boxes on the conveyor belt, coordinating with the UR10 robot.
+
+This script is designed to run within RoboDK environment.
 """
 
+from robolink import *    # RoboDK API
+from robodk import *      # Robot toolbox
 import sys
 import os
 
@@ -22,14 +26,31 @@ class UR5BoxFolding:
     def __init__(self):
         self.config = UR5Config()
         self.handshake = RobotHandshake("UR5")
-        self.current_position = None
+        
+        # Connect to RoboDK
+        self.RDK = Robolink()
+        
+        # Get the UR5 robot
+        self.robot = self.RDK.Item('UR5', ITEM_TYPE_ROBOT)
+        if not self.robot.Valid():
+            raise Exception("UR5 robot not found in RoboDK station")
+        
+        # Get reference frame and tool
+        self.frame = self.RDK.Item('UR5 Base')
+        self.tool = self.robot.PoseTool()
+        
+        print(f"[UR5] Connected to RoboDK")
+        print(f"[UR5] Robot: {self.robot.Name()}")
         
     def initialize(self):
         """Initialize the UR5 robot"""
         print(f"[UR5] Initializing robot...")
-        print(f"[UR5] Home position: {self.config.HOME_POSITION}")
-        # TODO: Initialize RoboDK connection
-        # TODO: Move to home position
+        
+        # Move to home position
+        home_joints = self.config.HOME_JOINTS
+        self.robot.MoveJ(home_joints)
+        
+        print(f"[UR5] Robot initialized at home position")
         
     def fold_box(self, box_id):
         """
@@ -40,10 +61,22 @@ class UR5BoxFolding:
         """
         print(f"[UR5] Starting box folding sequence for box {box_id}")
         
+        # Get folding targets from RoboDK station
+        folding_targets = self.config.get_folding_targets()
+        
         # Folding steps
-        for i, step in enumerate(self.config.FOLDING_SEQUENCE, 1):
-            print(f"[UR5] Folding step {i}: {step}")
-            # TODO: Execute folding movement
+        for i, (step_name, target_name) in enumerate(zip(self.config.FOLDING_SEQUENCE, folding_targets), 1):
+            print(f"[UR5] Folding step {i}: {step_name}")
+            
+            # Get the target from RoboDK station
+            target = self.RDK.Item(target_name, ITEM_TYPE_TARGET)
+            if target.Valid():
+                # Move to folding position
+                self.robot.MoveL(target)
+                # Pause briefly to simulate folding action
+                pause(0.5)
+            else:
+                print(f"[UR5] Warning: Target '{target_name}' not found, skipping step")
             
         print(f"[UR5] Box {box_id} folded successfully")
         
@@ -54,9 +87,32 @@ class UR5BoxFolding:
         Args:
             box_id: Identifier for the box
         """
-        print(f"[UR5] Moving box {box_id} to conveyor position: {self.config.CONVEYOR_POSITION}")
-        # TODO: Move to conveyor position
-        # TODO: Release box
+        print(f"[UR5] Moving box {box_id} to conveyor")
+        
+        # Get the conveyor target from RoboDK station
+        conveyor_target = self.RDK.Item(self.config.CONVEYOR_TARGET, ITEM_TYPE_TARGET)
+        if not conveyor_target.Valid():
+            print(f"[UR5] Warning: Conveyor target not found, using default position")
+            conveyor_target = self.robot.Pose()
+        
+        # Move above the conveyor position
+        approach_pose = conveyor_target.Pose() * transl(0, 0, self.config.SAFE_HEIGHT)
+        self.robot.MoveJ(approach_pose)
+        
+        # Move down to conveyor
+        self.robot.MoveL(conveyor_target)
+        
+        # Release box (simulate)
+        print(f"[UR5] Releasing box on conveyor...")
+        # TODO: Implement actual gripper control
+        # self.open_gripper()
+        
+        # Move back up
+        self.robot.MoveL(approach_pose)
+        
+        # Wait for conveyor to move box
+        pause(self.config.CONVEYOR_WAIT_TIME)
+        
         print(f"[UR5] Box {box_id} placed on conveyor successfully")
         
     def wait_for_ur10_complete(self):
@@ -97,15 +153,21 @@ class UR5BoxFolding:
 def main():
     """Main function to run UR5 box folding program"""
     print("="*50)
-    print("UR5 Box Folding and Conveyor Program")
+    print("UR5 Box Folding and Conveyor Program - RoboDK")
     print("Responsible: Diego")
     print("="*50)
     
-    robot = UR5BoxFolding()
-    robot.initialize()
-    
-    # Run a test cycle
-    robot.run_folding_cycle(box_id=1)
+    try:
+        robot = UR5BoxFolding()
+        robot.initialize()
+        
+        # Run a test cycle
+        robot.run_folding_cycle(box_id=1)
+        
+    except Exception as e:
+        print(f"[UR5] Error: {e}")
+        import traceback
+        traceback.print_exc()
 
 
 if __name__ == "__main__":
