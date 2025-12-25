@@ -1,4 +1,4 @@
-# UR5 Box Folding and Conveyor Program - TEMPLATE
+# UR5 Box Folding and Conveyor Program - TEMPLATE (You MUST create your own README)
 
 **Responsible:** Diego
 
