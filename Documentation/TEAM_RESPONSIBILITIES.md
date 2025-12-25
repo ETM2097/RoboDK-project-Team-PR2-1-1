@@ -57,7 +57,7 @@
 - Verify synchronization between UR10 and UR5
 - Identify and correct communication issues
 - Test complete integrated system
-- Validate timeout and error handling
+- Validate timeout (optional) and error handling
 - Document integration test results
 - Propose improvements to handshake protocol
 
@@ -71,7 +71,7 @@
 - [ ] Correct any synchronization issues found
 
 **Key Files:**
-- `/Handshake/handshake.py`
+- `/Handshake/handshake.py` Where the semaphores will be properly updated
 - `/Handshake/handshake_protocol.md`
 - `/Handshake/README.md`
 
@@ -80,65 +80,52 @@
 ## Collaboration Guidelines
 
 ### Communication
-- Document all changes in `IMPROVEMENTS.md`
+- Document all changes in `IMPROVEMENTS.md` 
 - Include clear descriptions of what was changed and why
 - Reference specific files and line numbers when possible
-- Report any issues encountered and solutions applied
+- Report any issues encountered and solutions applied to Enric
 
 ### Testing
 - Test individual components before integration testing
-- Use the test functions provided in each module
 - Report test results in documentation
-- Coordinate with other team members for integration tests
+- Coordinate with other team members for integration tests, Ex. Testing start/stop of the object following
 
 ### Code Standards
-- Follow Python PEP 8 style guidelines
-- Include docstrings for all classes and functions
-- Add comments for complex logic
-- Use meaningful variable and function names
-- Keep functions focused and modular
+- Follow Python coding guidelines
+- Include proper documentation for all classes and functions
+- Add comments for complex logic at the top of the logic
+- Use meaningful variable and function names, Ex. `baseFrameConveyor`
+- Keep functions focused and modular, as we may use them more than once
 
 ### Version Control
 - Commit frequently with clear commit messages
-- Pull latest changes before starting work
-- Resolve conflicts promptly
+- Pull latest changes before starting work `MANDATORY`
+- Contact Enric in case you have a conflict for correctly resolve it
 - Review changes before pushing
 
-## Task Dependencies
-
-```
-Initial Setup (Complete)
-    ↓
-┌───────────────┬───────────────┬───────────────┐
-│               │               │               │
-Sergio:         Diego:          Felix:
-UR10 Program    UR5 Program     Review Handshake
-    │               │               │
-    └───────────────┴───────────────┘
-                    ↓
-            Integration Testing
-                    ↓
-              Final Review
-                    ↓
-            Documentation
-```
 
 ## Milestones
 
-### Phase 1: Individual Development (Week 1)
-- [ ] Sergio completes UR10 program
-- [ ] Diego completes UR5 program
-- [ ] Felix reviews handshake system
+### Phase 1: Individual Development (Up to 26/12/25)
+- [ ] Sergio completes UR10 program with the conveyor spawning and proper pick and place logic
+- [ ] Diego completes UR5 program with the proper picking, folding, placing and spawning logic
+- [ ] Felix reviews handshake system making sure programs starts and stops when they have to (no placing before box for example)
 
-### Phase 2: Integration (Week 2)
+### Phase 2: Integration (Up to 28/12/25)
 - [ ] Felix tests handshake communication
 - [ ] Felix coordinates integration testing
-- [ ] Team resolves integration issues
+- [ ] Team resolves integration issues by making changes required by Felix
 
-### Phase 3: Testing and Documentation (Week 3)
-- [ ] Complete system testing
-- [ ] Final documentation updates
-- [ ] Project review and sign-off
+### Phase 3: Testing and Documentation (Up to 31/12/25)
+- [ ] Felix Complete system testing
+- [ ] Enric reviews final documentation updates
+- [ ] Enric makes the full project review and validation
+
+### Phase 4: Writing final documentation and presentation making (Up to 05/12/25)
+- [ ] Felix and Sergio creates the presentation for PRR
+- [ ] Diego is in charge of generating the timelines and other requirements for PR2 part of the project
+- [ ] Enric writes the documentation needed for PRR
+- [ ] Felix and sergio review the documentations and double-checks them
 
 ## Questions and Support
 
@@ -152,7 +139,7 @@ Contact: Diego
 Contact: Felix
 
 ### For General Project Questions:
-Discuss with entire team
+Contact: Enric
 
 ## Updates Log
 
