@@ -12,6 +12,7 @@ from robolink import *    # RoboDK API
 from robodk import *      # Robot toolbox
 import sys
 import os
+import time
 
 # Add parent directory to path to import handshake module
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -74,7 +75,10 @@ class UR5BoxFolding:
                 # Move to folding position
                 self.robot.MoveL(target)
                 # Pause briefly to simulate folding action
-                pause(0.5)
+                try:
+                    pause(0.5)  # RoboDK pause function
+                except NameError:
+                    time.sleep(0.5)  # Fallback to standard Python sleep
             else:
                 print(f"[UR5] Warning: Target '{target_name}' not found, skipping step")
             
@@ -111,7 +115,10 @@ class UR5BoxFolding:
         self.robot.MoveL(approach_pose)
         
         # Wait for conveyor to move box
-        pause(self.config.CONVEYOR_WAIT_TIME)
+        try:
+            pause(self.config.CONVEYOR_WAIT_TIME)  # RoboDK pause function
+        except NameError:
+            time.sleep(self.config.CONVEYOR_WAIT_TIME)  # Fallback to standard Python sleep
         
         print(f"[UR5] Box {box_id} placed on conveyor successfully")
         

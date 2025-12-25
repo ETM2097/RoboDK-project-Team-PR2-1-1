@@ -155,13 +155,6 @@ Team PR2-1-1 Project
 
 ## Contact
 For questions, refer to [Team Responsibilities](Documentation/TEAM_RESPONSIBILITIES.md) for appropriate team member contacts.
-python UR10_PickAndPlace/ur10_program.py
-```
-
-Test UR5 program:
-```bash
-python UR5_BoxFolding/ur5_program.py
-```
 
 Test handshake system:
 ```bash
