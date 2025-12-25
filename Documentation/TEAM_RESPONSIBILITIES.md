@@ -153,5 +153,6 @@ Contact: Enric
 
 | Date | Team Member | Update |
 |------|-------------|---------|
-| 2024-12-25 | Setup | Initial project structure created |
+| 2024-12-25 // 12:00 | Enric | Initial project structure created |
+| 2024-12-25 // 18:30 | Enric | Changed main implementation issuses for easier implementation |
 | | | |
