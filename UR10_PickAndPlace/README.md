@@ -1,4 +1,6 @@
 # UR10 Pick and Place Program - TEMPLATE (You MUST create your own README)
+This is a template for the README you must implement. Please [read this section](README.md#instructions-for-sergio) for knowing your tasks.
+
 
 **Responsible:** Sergio
 
@@ -82,10 +84,11 @@ robot = RDK.Item('UR10', robolink.ITEM_TYPE_ROBOT)
    - Add any objects you need to pick/place
 
 2. **Customize the template:**
-   - Implement actual gripper control in `open_gripper()` and `close_gripper()`
+   - Implement actual gripper turning ON and OFF
    - Modify the pick and place logic as needed
    - Add additional helper functions if needed
    - Adjust configuration parameters (speeds, heights, cycles)
+   - Correctly implement the semaphores needed for correct comunucation with the rest of the station
 
 3. **Test your implementation:**
    - Test each function individually
