@@ -58,20 +58,20 @@ class UR10PickAndPlace:
     def wait_for_ur5_ready(self):
         """Wait for UR5 to signal it's ready"""
         print("[UR10] Waiting for UR5 to be ready...")
-        self.handshake.wait_for_signal("UR5", "READY")
+        self.handshake.wait_for_signal("UR5", RobotHandshake.SIGNAL_READY)
         print("[UR10] UR5 is ready, proceeding...")
         
     def signal_operation_complete(self):
         """Signal that UR10 has completed its operation"""
         print("[UR10] Signaling operation complete...")
-        self.handshake.send_signal("UR10", "COMPLETE")
+        self.handshake.send_signal("UR10", RobotHandshake.SIGNAL_COMPLETE)
         
     def run_pick_and_place_cycle(self):
         """Execute a complete pick and place cycle"""
         print("[UR10] Starting pick and place cycle...")
         
         # Signal ready to start
-        self.handshake.send_signal("UR10", "READY")
+        self.handshake.send_signal("UR10", RobotHandshake.SIGNAL_READY)
         
         # Pick object
         self.pick_object(self.config.PICK_POSITION)

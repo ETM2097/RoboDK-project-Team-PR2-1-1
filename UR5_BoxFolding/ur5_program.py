@@ -62,13 +62,13 @@ class UR5BoxFolding:
     def wait_for_ur10_complete(self):
         """Wait for UR10 to complete its operation"""
         print("[UR5] Waiting for UR10 to complete operation...")
-        self.handshake.wait_for_signal("UR10", "COMPLETE")
+        self.handshake.wait_for_signal("UR10", RobotHandshake.SIGNAL_COMPLETE)
         print("[UR5] UR10 operation complete, proceeding...")
         
     def signal_ready(self):
         """Signal that UR5 is ready for next operation"""
         print("[UR5] Signaling ready status...")
-        self.handshake.send_signal("UR5", "READY")
+        self.handshake.send_signal("UR5", RobotHandshake.SIGNAL_READY)
         
     def run_folding_cycle(self, box_id):
         """

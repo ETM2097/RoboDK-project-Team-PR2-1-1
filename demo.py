@@ -15,7 +15,7 @@ from threading import Thread
 # Import robot programs
 from UR10_PickAndPlace.ur10_program import UR10PickAndPlace
 from UR5_BoxFolding.ur5_program import UR5BoxFolding
-from Handshake.handshake import RobotHandshake
+from Handshake.handshake import RobotHandshake, test_handshake
 
 
 def run_ur10_robot(cycles=1):
@@ -119,7 +119,6 @@ def main():
         run_ur5_robot(cycles=1)
     elif choice == "4":
         print("\nRunning handshake system test...")
-        from Handshake.handshake import test_handshake
         test_handshake()
     else:
         # Default: full demonstration
