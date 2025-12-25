@@ -1,7 +1,7 @@
 # Improvements and Changes Log
 
 ## Purpose
-This document tracks all improvements, changes, and fixes made to the RoboDK project by team members.
+This document tracks all improvements, changes, and fixes made to the RoboDK project by team members. This file is directly managed and revised by Enric, you have the template for a new entry on the bottom of this file. No need to fill the table, that is Enric's job.
 
 ## How to Use This Document
 When you make improvements or changes:
