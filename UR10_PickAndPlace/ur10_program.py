@@ -1,174 +1,233 @@
 """
-UR10 Pick and Place Program
+UR10 Pick and Place Program - TEMPLATE
 Responsible: Sergio
 
-This RoboDK program controls the UR10 robot for pick and place operations
-and coordinates with the UR5 robot through handshake signals.
+This is a template for the UR10 robot pick and place operations in RoboDK.
+Sergio should build upon this template to implement the complete logic.
 
-This script is designed to run within RoboDK environment.
+SETUP REQUIRED IN ROBODK STATION:
+1. A UR10 robot named 'UR10'
+2. Targets: 'UR10_Home', 'UR10_PrePick', 'UR10_Pick', 'UR10_PrePlace', 'UR10_Place'
+3. (Optional) A gripper tool attached to the robot
+4. Objects to pick (can be added as needed)
+
+This script coordinates with the UR5 program using handshake signals.
 """
 
-from robolink import *    # RoboDK API
-from robodk import *      # Robot toolbox (includes transl, pause, etc.)
+from robodk import robolink, robomath
 import sys
 import os
+import time
 
 # Add parent directory to path to import handshake module
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from Handshake.handshake import RobotHandshake
-from UR10_PickAndPlace.ur10_config import UR10Config
 
+# ============================================================================
+# SETUP - Connect to RoboDK and get robot/targets
+# ============================================================================
 
-class UR10PickAndPlace:
-    """UR10 Robot controller for pick and place operations"""
+RDK = robolink.Robolink()
+robot = RDK.Item('UR10', robolink.ITEM_TYPE_ROBOT)
+
+if not robot.Valid():
+    raise Exception("UR10 robot not found in RoboDK station. Please add a UR10 robot named 'UR10'.")
+
+print(f"[UR10] Connected to robot: {robot.Name()}")
+
+# Get targets - Sergio: Add these targets to your RoboDK station
+t_home = RDK.Item('UR10_Home')
+t_prepick = RDK.Item('UR10_PrePick')
+t_pick = RDK.Item('UR10_Pick')
+t_preplace = RDK.Item('UR10_PrePlace')
+t_place = RDK.Item('UR10_Place')
+
+# Optional: Get gripper tool
+# gripper = RDK.Item('Gripper', robolink.ITEM_TYPE_TOOL)
+
+# Initialize handshake for coordination with UR5
+handshake = RobotHandshake("UR10")
+
+# ============================================================================
+# CONFIGURATION - Adjust these parameters as needed
+# ============================================================================
+
+SAFE_HEIGHT_OFFSET = 100.0  # mm above pick/place positions
+MAX_CYCLES = 10  # Number of pick and place cycles
+SPEED_FACTOR = 1.0  # Speed multiplier (0.1 to 1.0)
+
+# ============================================================================
+# HELPER FUNCTIONS - Sergio: Add more functions as needed
+# ============================================================================
+
+def move_with_offset_z(target, z_offset):
+    """
+    Move to a target with a Z offset
     
-    def __init__(self):
-        self.config = UR10Config()
-        self.handshake = RobotHandshake("UR10")
-        
-        # Connect to RoboDK
-        self.RDK = Robolink()
-        
-        # Get the UR10 robot
-        self.robot = self.RDK.Item('UR10', ITEM_TYPE_ROBOT)
-        if not self.robot.Valid():
-            raise Exception("UR10 robot not found in RoboDK station")
-        
-        # Get reference frame and tool
-        self.frame = self.RDK.Item('UR10 Base')
-        self.tool = self.robot.PoseTool()
-        
-        print(f"[UR10] Connected to RoboDK")
-        print(f"[UR10] Robot: {self.robot.Name()}")
-        
-    def initialize(self):
-        """Initialize the UR10 robot"""
-        print(f"[UR10] Initializing robot...")
-        
-        # Move to home position
-        home_joints = self.config.HOME_JOINTS
-        self.robot.MoveJ(home_joints)
-        
-        print(f"[UR10] Robot initialized at home position")
-        
-    def pick_object(self, target_name):
-        """
-        Pick an object from the specified target
-        
-        Args:
-            target_name: Name of the target/object in RoboDK station
-        """
-        print(f"[UR10] Moving to pick object: {target_name}")
-        
-        # Get the target from RoboDK station
-        target = self.RDK.Item(target_name, ITEM_TYPE_TARGET)
-        if not target.Valid():
-            print(f"[UR10] Warning: Target '{target_name}' not found, using default position")
-            target = self.robot.Pose()
-        
-        # Move above the object
-        approach_pose = target.Pose() * transl(0, 0, self.config.SAFE_HEIGHT)
-        self.robot.MoveJ(approach_pose)
-        
-        # Move down to pick position
-        self.robot.MoveL(target)
-        
-        # Close gripper (simulate)
-        print(f"[UR10] Closing gripper...")
-        # TODO: Implement actual gripper control
-        # self.close_gripper()
-        
-        # Move back up
-        self.robot.MoveL(approach_pose)
-        
-        print(f"[UR10] Object picked successfully")
-        
-    def place_object(self, target_name):
-        """
-        Place the object at the specified target position
-        
-        Args:
-            target_name: Name of the placement target in RoboDK station
-        """
-        print(f"[UR10] Moving to place position: {target_name}")
-        
-        # Get the target from RoboDK station
-        target = self.RDK.Item(target_name, ITEM_TYPE_TARGET)
-        if not target.Valid():
-            print(f"[UR10] Warning: Target '{target_name}' not found, using default position")
-            target = self.robot.Pose()
-        
-        # Move above the placement position
-        approach_pose = target.Pose() * transl(0, 0, self.config.SAFE_HEIGHT)
-        self.robot.MoveJ(approach_pose)
-        
-        # Move down to place position
-        self.robot.MoveL(target)
-        
-        # Open gripper (simulate)
-        print(f"[UR10] Opening gripper...")
-        # TODO: Implement actual gripper control
-        # self.open_gripper()
-        
-        # Move back up
-        self.robot.MoveL(approach_pose)
-        
-        print(f"[UR10] Object placed successfully")
-        
-    def wait_for_ur5_ready(self):
-        """Wait for UR5 to signal it's ready"""
-        print("[UR10] Waiting for UR5 to be ready...")
-        self.handshake.wait_for_signal("UR5", RobotHandshake.SIGNAL_READY)
-        print("[UR10] UR5 is ready, proceeding...")
-        
-    def signal_operation_complete(self):
-        """Signal that UR10 has completed its operation"""
-        print("[UR10] Signaling operation complete...")
-        self.handshake.send_signal("UR10", RobotHandshake.SIGNAL_COMPLETE)
-        
-    def run_pick_and_place_cycle(self):
-        """Execute a complete pick and place cycle"""
-        print("[UR10] Starting pick and place cycle...")
-        
-        # Signal ready to start
-        self.handshake.send_signal("UR10", RobotHandshake.SIGNAL_READY)
-        
-        # Pick object from pick target
-        self.pick_object(self.config.PICK_TARGET)
-        
-        # Place object at place target
-        self.place_object(self.config.PLACE_TARGET)
-        
-        # Signal completion
-        self.signal_operation_complete()
-        
-        # Wait for UR5 to finish before next cycle
-        print("[UR10] Waiting for UR5 to finish folding...")
-        self.wait_for_ur5_ready()
-        
-        print("[UR10] Pick and place cycle completed")
+    Args:
+        target: RoboDK target item
+        z_offset: Z offset in mm
+    """
+    if target.Valid():
+        pose = target.Pose()
+        robot.MoveL(pose * robomath.transl(0, 0, z_offset))
+    else:
+        print(f"[UR10] Warning: Target not found")
 
+def open_gripper():
+    """
+    Open the gripper
+    Sergio: Implement actual gripper control here
+    """
+    print("[UR10] Opening gripper...")
+    # TODO: Add gripper opening code
+    # Example: RDK.setParam('GripperOpen', 1)
+    time.sleep(0.5)
+
+def close_gripper():
+    """
+    Close the gripper
+    Sergio: Implement actual gripper control here
+    """
+    print("[UR10] Closing gripper...")
+    # TODO: Add gripper closing code
+    # Example: RDK.setParam('GripperClose', 1)
+    time.sleep(0.5)
+
+def pick_object(object_name=None):
+    """
+    Pick an object at the pick location
+    
+    Args:
+        object_name: Optional name of object to pick from station
+    """
+    print("[UR10] Executing pick operation...")
+    
+    # Move to pre-pick position
+    if t_prepick.Valid():
+        robot.MoveJ(t_prepick)
+    
+    # Move to pick position
+    if t_pick.Valid():
+        robot.MoveL(t_pick)
+    
+    # Close gripper
+    close_gripper()
+    
+    # Optional: Attach object to gripper
+    if object_name:
+        obj = RDK.Item(object_name, robolink.ITEM_TYPE_OBJECT)
+        if obj.Valid():
+            gripper = robot.Childs()[0] if len(robot.Childs()) > 0 else robot
+            obj.setParentStatic(gripper)
+    
+    # Move back to pre-pick
+    if t_prepick.Valid():
+        robot.MoveL(t_prepick)
+    
+    print("[UR10] Pick complete")
+
+def place_object(object_name=None):
+    """
+    Place an object at the place location
+    
+    Args:
+        object_name: Optional name of object to place
+    """
+    print("[UR10] Executing place operation...")
+    
+    # Move to pre-place position
+    if t_preplace.Valid():
+        robot.MoveJ(t_preplace)
+    
+    # Move to place position
+    if t_place.Valid():
+        robot.MoveL(t_place)
+    
+    # Open gripper
+    open_gripper()
+    
+    # Optional: Detach object from gripper
+    if object_name:
+        obj = RDK.Item(object_name, robolink.ITEM_TYPE_OBJECT)
+        if obj.Valid():
+            station = RDK.Item('Station')
+            obj.setParentStatic(station)
+    
+    # Move back to pre-place
+    if t_preplace.Valid():
+        robot.MoveL(t_preplace)
+    
+    print("[UR10] Place complete")
+
+# ============================================================================
+# MAIN PROGRAM - Sergio: Implement your logic here
+# ============================================================================
 
 def main():
-    """Main function to run UR10 pick and place program"""
-    print("="*50)
-    print("UR10 Pick and Place Program - RoboDK")
+    """
+    Main program loop
+    Sergio: This is where you implement the pick and place logic
+    """
+    print("="*60)
+    print("UR10 Pick and Place Program")
     print("Responsible: Sergio")
-    print("="*50)
+    print("="*60)
     
+    # Move to home position
+    if t_home.Valid():
+        print("[UR10] Moving to home position...")
+        robot.MoveJ(t_home)
+    else:
+        print("[UR10] Warning: Home target not found. Please add 'UR10_Home' target.")
+    
+    # Main loop
+    cycle_count = 0
+    
+    while cycle_count < MAX_CYCLES:
+        print(f"\n[UR10] --- Cycle {cycle_count + 1}/{MAX_CYCLES} ---")
+        
+        # Signal that UR10 is ready to start
+        handshake.send_signal("UR10", RobotHandshake.SIGNAL_READY)
+        print("[UR10] Signaled READY to UR5")
+        
+        # Execute pick operation
+        pick_object()
+        
+        # Execute place operation
+        place_object()
+        
+        # Signal that UR10 has completed its operation
+        handshake.send_signal("UR10", RobotHandshake.SIGNAL_COMPLETE)
+        print("[UR10] Signaled COMPLETE to UR5")
+        
+        # Wait for UR5 to be ready before next cycle
+        print("[UR10] Waiting for UR5 to be ready...")
+        handshake.wait_for_signal("UR5", RobotHandshake.SIGNAL_READY)
+        print("[UR10] UR5 is ready, continuing...")
+        
+        cycle_count += 1
+        time.sleep(0.5)  # Small delay between cycles
+    
+    # Return to home
+    if t_home.Valid():
+        print("[UR10] Returning to home position...")
+        robot.MoveJ(t_home)
+    
+    print("[UR10] Program completed successfully!")
+
+# ============================================================================
+# ENTRY POINT
+# ============================================================================
+
+if __name__ == "__main__":
     try:
-        robot = UR10PickAndPlace()
-        robot.initialize()
-        
-        # Run a test cycle
-        robot.run_pick_and_place_cycle()
-        
+        main()
+    except KeyboardInterrupt:
+        print("\n[UR10] Program interrupted by user")
     except Exception as e:
         print(f"[UR10] Error: {e}")
         import traceback
         traceback.print_exc()
 
-
-if __name__ == "__main__":
-    main()

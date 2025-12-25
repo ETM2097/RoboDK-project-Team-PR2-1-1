@@ -1,15 +1,20 @@
 """
-UR5 Box Folding and Conveyor Program
+UR5 Box Folding and Conveyor Program - TEMPLATE
 Responsible: Diego
 
-This RoboDK program controls the UR5 robot for box folding operations
-and placing boxes on the conveyor belt, coordinating with the UR10 robot.
+This is a template for the UR5 robot box folding and conveyor operations in RoboDK.
+Diego should build upon this template to implement the complete logic.
 
-This script is designed to run within RoboDK environment.
+SETUP REQUIRED IN ROBODK STATION:
+1. A UR5 robot named 'UR5'
+2. Targets: 'UR5_Home', 'UR5_Fold1', 'UR5_Fold2', 'UR5_Fold3', 'UR5_Fold4', 'UR5_ConveyorPlace'
+3. (Optional) A gripper tool attached to the robot
+4. (Optional) Conveyor belt and box objects
+
+This script coordinates with the UR10 program using handshake signals.
 """
 
-from robolink import *    # RoboDK API
-from robodk import *      # Robot toolbox (includes transl, pause, etc.)
+from robodk import robolink, robomath
 import sys
 import os
 import time
@@ -18,164 +23,209 @@ import time
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from Handshake.handshake import RobotHandshake
-from UR5_BoxFolding.ur5_config import UR5Config
 
+# ============================================================================
+# SETUP - Connect to RoboDK and get robot/targets
+# ============================================================================
 
-class UR5BoxFolding:
-    """UR5 Robot controller for box folding and conveyor operations"""
+RDK = robolink.Robolink()
+robot = RDK.Item('UR5', robolink.ITEM_TYPE_ROBOT)
+
+if not robot.Valid():
+    raise Exception("UR5 robot not found in RoboDK station. Please add a UR5 robot named 'UR5'.")
+
+print(f"[UR5] Connected to robot: {robot.Name()}")
+
+# Get targets - Diego: Add these targets to your RoboDK station
+t_home = RDK.Item('UR5_Home')
+t_fold1 = RDK.Item('UR5_Fold1')  # Fold bottom flap
+t_fold2 = RDK.Item('UR5_Fold2')  # Fold left side
+t_fold3 = RDK.Item('UR5_Fold3')  # Fold right side
+t_fold4 = RDK.Item('UR5_Fold4')  # Fold top flap
+t_conveyor = RDK.Item('UR5_ConveyorPlace')
+
+# Optional: Get gripper tool
+# gripper = RDK.Item('Gripper', robolink.ITEM_TYPE_TOOL)
+
+# Initialize handshake for coordination with UR10
+handshake = RobotHandshake("UR5")
+
+# ============================================================================
+# CONFIGURATION - Adjust these parameters as needed
+# ============================================================================
+
+SAFE_HEIGHT_OFFSET = 100.0  # mm above folding/conveyor positions
+FOLD_PAUSE_TIME = 0.5  # seconds to pause at each folding position
+CONVEYOR_WAIT_TIME = 2.0  # seconds to wait after placing on conveyor
+MAX_CYCLES = 10  # Number of box folding cycles
+SPEED_FACTOR = 1.0  # Speed multiplier (0.1 to 1.0)
+
+# ============================================================================
+# HELPER FUNCTIONS - Diego: Add more functions as needed
+# ============================================================================
+
+def move_with_offset_z(target, z_offset):
+    """
+    Move to a target with a Z offset
     
-    def __init__(self):
-        self.config = UR5Config()
-        self.handshake = RobotHandshake("UR5")
-        
-        # Connect to RoboDK
-        self.RDK = Robolink()
-        
-        # Get the UR5 robot
-        self.robot = self.RDK.Item('UR5', ITEM_TYPE_ROBOT)
-        if not self.robot.Valid():
-            raise Exception("UR5 robot not found in RoboDK station")
-        
-        # Get reference frame and tool
-        self.frame = self.RDK.Item('UR5 Base')
-        self.tool = self.robot.PoseTool()
-        
-        print(f"[UR5] Connected to RoboDK")
-        print(f"[UR5] Robot: {self.robot.Name()}")
-        
-    def initialize(self):
-        """Initialize the UR5 robot"""
-        print(f"[UR5] Initializing robot...")
-        
-        # Move to home position
-        home_joints = self.config.HOME_JOINTS
-        self.robot.MoveJ(home_joints)
-        
-        print(f"[UR5] Robot initialized at home position")
-        
-    def fold_box(self, box_id):
-        """
-        Fold a box according to the folding sequence
-        
-        Args:
-            box_id: Identifier for the box being folded
-        """
-        print(f"[UR5] Starting box folding sequence for box {box_id}")
-        
-        # Get folding targets from RoboDK station
-        folding_targets = self.config.get_folding_targets()
-        
-        # Folding steps
-        for i, (step_name, target_name) in enumerate(zip(self.config.FOLDING_SEQUENCE, folding_targets), 1):
-            print(f"[UR5] Folding step {i}: {step_name}")
-            
-            # Get the target from RoboDK station
-            target = self.RDK.Item(target_name, ITEM_TYPE_TARGET)
-            if target.Valid():
-                # Move to folding position
-                self.robot.MoveL(target)
-                # Pause briefly to simulate folding action
-                try:
-                    pause(0.5)  # RoboDK pause function
-                except NameError:
-                    time.sleep(0.5)  # Fallback to standard Python sleep
-            else:
-                print(f"[UR5] Warning: Target '{target_name}' not found, skipping step")
-            
-        print(f"[UR5] Box {box_id} folded successfully")
-        
-    def place_on_conveyor(self, box_id):
-        """
-        Place the folded box on the conveyor belt
-        
-        Args:
-            box_id: Identifier for the box
-        """
-        print(f"[UR5] Moving box {box_id} to conveyor")
-        
-        # Get the conveyor target from RoboDK station
-        conveyor_target = self.RDK.Item(self.config.CONVEYOR_TARGET, ITEM_TYPE_TARGET)
-        if not conveyor_target.Valid():
-            print(f"[UR5] Warning: Conveyor target not found, using default position")
-            conveyor_target = self.robot.Pose()
-        
-        # Move above the conveyor position
-        approach_pose = conveyor_target.Pose() * transl(0, 0, self.config.SAFE_HEIGHT)
-        self.robot.MoveJ(approach_pose)
-        
-        # Move down to conveyor
-        self.robot.MoveL(conveyor_target)
-        
-        # Release box (simulate)
-        print(f"[UR5] Releasing box on conveyor...")
-        # TODO: Implement actual gripper control
-        # self.open_gripper()
-        
-        # Move back up
-        self.robot.MoveL(approach_pose)
-        
-        # Wait for conveyor to move box
-        try:
-            pause(self.config.CONVEYOR_WAIT_TIME)  # RoboDK pause function
-        except NameError:
-            time.sleep(self.config.CONVEYOR_WAIT_TIME)  # Fallback to standard Python sleep
-        
-        print(f"[UR5] Box {box_id} placed on conveyor successfully")
-        
-    def wait_for_ur10_complete(self):
-        """Wait for UR10 to complete its operation"""
-        print("[UR5] Waiting for UR10 to complete operation...")
-        self.handshake.wait_for_signal("UR10", RobotHandshake.SIGNAL_COMPLETE)
-        print("[UR5] UR10 operation complete, proceeding...")
-        
-    def signal_ready(self):
-        """Signal that UR5 is ready for next operation"""
-        print("[UR5] Signaling ready status...")
-        self.handshake.send_signal("UR5", RobotHandshake.SIGNAL_READY)
-        
-    def run_folding_cycle(self, box_id):
-        """
-        Execute a complete box folding and conveyor placement cycle
-        
-        Args:
-            box_id: Identifier for the box
-        """
-        print(f"[UR5] Starting folding cycle for box {box_id}...")
-        
-        # Wait for UR10 to complete its operation
-        self.wait_for_ur10_complete()
-        
-        # Fold the box
-        self.fold_box(box_id)
-        
-        # Signal ready for coordination
-        self.signal_ready()
-        
-        # Place box on conveyor
-        self.place_on_conveyor(box_id)
-        
-        print(f"[UR5] Folding cycle for box {box_id} completed")
+    Args:
+        target: RoboDK target item
+        z_offset: Z offset in mm
+    """
+    if target.Valid():
+        pose = target.Pose()
+        robot.MoveL(pose * robomath.transl(0, 0, z_offset))
+    else:
+        print(f"[UR5] Warning: Target not found")
 
+def open_gripper():
+    """
+    Open the gripper
+    Diego: Implement actual gripper control here
+    """
+    print("[UR5] Opening gripper...")
+    # TODO: Add gripper opening code
+    # Example: RDK.setParam('GripperOpen', 1)
+    time.sleep(0.3)
+
+def close_gripper():
+    """
+    Close the gripper
+    Diego: Implement actual gripper control here
+    """
+    print("[UR5] Closing gripper...")
+    # TODO: Add gripper closing code
+    # Example: RDK.setParam('GripperClose', 1)
+    time.sleep(0.3)
+
+def fold_box(box_id):
+    """
+    Execute the 4-step box folding sequence
+    
+    Args:
+        box_id: Identifier for the box being folded
+    """
+    print(f"[UR5] Starting folding sequence for box {box_id}...")
+    
+    folding_steps = [
+        (t_fold1, "Fold bottom flap"),
+        (t_fold2, "Fold left side"),
+        (t_fold3, "Fold right side"),
+        (t_fold4, "Fold top flap and seal")
+    ]
+    
+    for i, (target, description) in enumerate(folding_steps, 1):
+        print(f"[UR5] Step {i}/4: {description}")
+        
+        if target.Valid():
+            # Move to folding position
+            robot.MoveL(target)
+            
+            # Pause to simulate folding action
+            time.sleep(FOLD_PAUSE_TIME)
+            
+            # Diego: Add actual folding action here
+            # Example: activate folding tool, apply pressure, etc.
+        else:
+            print(f"[UR5] Warning: Target not found for step {i}")
+    
+    print(f"[UR5] Box {box_id} folded successfully")
+
+def place_on_conveyor(box_id, box_name=None):
+    """
+    Place the folded box on the conveyor belt
+    
+    Args:
+        box_id: Identifier for the box
+        box_name: Optional name of box object in station
+    """
+    print(f"[UR5] Placing box {box_id} on conveyor...")
+    
+    if t_conveyor.Valid():
+        # Move to conveyor position
+        robot.MoveJ(t_conveyor)
+        
+        # Open gripper to release box
+        open_gripper()
+        
+        # Optional: Detach box object
+        if box_name:
+            box = RDK.Item(box_name, robolink.ITEM_TYPE_OBJECT)
+            if box.Valid():
+                station = RDK.Item('Station')
+                box.setParentStatic(station)
+        
+        # Wait for conveyor to move box away
+        print(f"[UR5] Waiting for conveyor to move box...")
+        time.sleep(CONVEYOR_WAIT_TIME)
+    else:
+        print("[UR5] Warning: Conveyor target not found")
+    
+    print(f"[UR5] Box {box_id} placed on conveyor")
+
+# ============================================================================
+# MAIN PROGRAM - Diego: Implement your logic here
+# ============================================================================
 
 def main():
-    """Main function to run UR5 box folding program"""
-    print("="*50)
-    print("UR5 Box Folding and Conveyor Program - RoboDK")
+    """
+    Main program loop
+    Diego: This is where you implement the box folding and conveyor logic
+    """
+    print("="*60)
+    print("UR5 Box Folding and Conveyor Program")
     print("Responsible: Diego")
-    print("="*50)
+    print("="*60)
     
+    # Move to home position
+    if t_home.Valid():
+        print("[UR5] Moving to home position...")
+        robot.MoveJ(t_home)
+    else:
+        print("[UR5] Warning: Home target not found. Please add 'UR5_Home' target.")
+    
+    # Main loop
+    cycle_count = 0
+    
+    while cycle_count < MAX_CYCLES:
+        print(f"\n[UR5] --- Cycle {cycle_count + 1}/{MAX_CYCLES} ---")
+        
+        # Wait for UR10 to complete its operation before starting
+        print("[UR5] Waiting for UR10 to complete...")
+        handshake.wait_for_signal("UR10", RobotHandshake.SIGNAL_COMPLETE)
+        print("[UR5] UR10 completed, starting folding...")
+        
+        # Execute box folding sequence
+        fold_box(cycle_count + 1)
+        
+        # Signal that UR5 is ready
+        handshake.send_signal("UR5", RobotHandshake.SIGNAL_READY)
+        print("[UR5] Signaled READY to UR10")
+        
+        # Place box on conveyor
+        place_on_conveyor(cycle_count + 1)
+        
+        cycle_count += 1
+        time.sleep(0.5)  # Small delay between cycles
+    
+    # Return to home
+    if t_home.Valid():
+        print("[UR5] Returning to home position...")
+        robot.MoveJ(t_home)
+    
+    print("[UR5] Program completed successfully!")
+
+# ============================================================================
+# ENTRY POINT
+# ============================================================================
+
+if __name__ == "__main__":
     try:
-        robot = UR5BoxFolding()
-        robot.initialize()
-        
-        # Run a test cycle
-        robot.run_folding_cycle(box_id=1)
-        
+        main()
+    except KeyboardInterrupt:
+        print("\n[UR5] Program interrupted by user")
     except Exception as e:
         print(f"[UR5] Error: {e}")
         import traceback
         traceback.print_exc()
 
-
-if __name__ == "__main__":
-    main()

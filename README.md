@@ -3,6 +3,8 @@
 ## Project Description
 Working repository for Team PR2-1-1's RoboDK project featuring coordinated operation of UR10 and UR5 robots using RoboDK simulation and control software.
 
+**This repository provides TEMPLATES that team members should build upon to implement their robot programs.**
+
 ## Team Members
 - **Sergio** - UR10 Pick and Place Programming
 - **Diego** - UR5 Box Folding and Conveyor Programming
@@ -10,28 +12,38 @@ Working repository for Team PR2-1-1's RoboDK project featuring coordinated opera
 
 ## Project Structure
 
-### 🤖 Robot Programs (RoboDK Compatible)
+### 🤖 Robot Program Templates (RoboDK Compatible)
 
 #### UR10_PickAndPlace/
 **Responsible:** Sergio  
-RoboDK program for UR10 robot to perform pick and place operations.
-- `ur10_program.py` - Main RoboDK robot control program
-- `ur10_config.py` - Configuration parameters
-- `README.md` - Setup and documentation
+**TEMPLATE** for UR10 robot pick and place operations.
+- `ur10_program.py` - RoboDK program template with basic structure
+- `README.md` - Detailed setup instructions and template guide
+
+**Sergio should:**
+- Set up RoboDK station with UR10 and targets
+- Build upon the template to implement complete logic
+- Implement gripper control
+- Test and refine the program
 
 #### UR5_BoxFolding/
 **Responsible:** Diego  
-RoboDK program for UR5 robot to fold boxes and place them on the conveyor.
-- `ur5_program.py` - Main RoboDK robot control program
-- `ur5_config.py` - Configuration parameters
-- `README.md` - Setup and documentation
+**TEMPLATE** for UR5 robot box folding and conveyor operations.
+- `ur5_program.py` - RoboDK program template with basic structure
+- `README.md` - Detailed setup instructions and template guide
+
+**Diego should:**
+- Set up RoboDK station with UR5 and targets
+- Build upon the template to implement complete logic
+- Implement box folding actions
+- Test and refine the program
 
 ### 🤝 Communication System
 
 #### Handshake/
 **Responsible for Review:** Felix  
 Communication module for robot synchronization and coordination.
-- `handshake.py` - Handshake implementation
+- `handshake.py` - Handshake implementation (ready to use)
 - `handshake_protocol.md` - Protocol documentation
 - `README.md` - Module documentation
 
@@ -47,28 +59,38 @@ Shared documentation for team improvements and collaboration.
 ### Prerequisites
 - **RoboDK** software installed (download from https://robodk.com/)
 - Python 3.x
-- RoboDK API for Python (usually included with RoboDK installation)
+- RoboDK API for Python (included with RoboDK installation)
 
 ### Setting Up Your RoboDK Station
 
 #### For UR10 (Sergio):
 1. Open RoboDK
-2. Add a UR10 robot to your station (name it "UR10")
-3. Create the following targets:
-   - `UR10_PickTarget` - Pick location
-   - `UR10_PlaceTarget` - Place location
+2. Add a UR10 robot to your station (name it **"UR10"**)
+3. Create the following targets by moving the robot to desired positions:
+   - `UR10_Home` - Home/starting position
+   - `UR10_PrePick` - Pre-pick approach position
+   - `UR10_Pick` - Pick position
+   - `UR10_PrePlace` - Pre-place approach position
+   - `UR10_Place` - Place position
 4. Load `UR10_PickAndPlace/ur10_program.py` into RoboDK
+5. Build upon the template to implement your specific logic
+
+See `UR10_PickAndPlace/README.md` for detailed instructions.
 
 #### For UR5 (Diego):
 1. Open RoboDK
-2. Add a UR5 robot to your station (name it "UR5")
-3. Create the following targets:
-   - `UR5_Fold1_Bottom` - Folding position 1
-   - `UR5_Fold2_Left` - Folding position 2
-   - `UR5_Fold3_Right` - Folding position 3
-   - `UR5_Fold4_Top` - Folding position 4
-   - `UR5_ConveyorTarget` - Conveyor placement
+2. Add a UR5 robot to your station (name it **"UR5"**)
+3. Create the following targets by moving the robot to desired positions:
+   - `UR5_Home` - Home/starting position
+   - `UR5_Fold1` - Position for folding bottom flap
+   - `UR5_Fold2` - Position for folding left side
+   - `UR5_Fold3` - Position for folding right side
+   - `UR5_Fold4` - Position for folding top flap and seal
+   - `UR5_ConveyorPlace` - Position to place box on conveyor
 4. Load `UR5_BoxFolding/ur5_program.py` into RoboDK
+5. Build upon the template to implement your specific logic
+
+See `UR5_BoxFolding/README.md` for detailed instructions.
 
 ### Running Robot Programs in RoboDK
 
@@ -133,22 +155,33 @@ Team members should:
 ## Project Status
 
 - [x] Project structure created
-- [x] UR10 RoboDK program template created with API integration
-- [x] UR5 RoboDK program template created with API integration
+- [x] **UR10 RoboDK program TEMPLATE created** - Sergio should build upon this
+- [x] **UR5 RoboDK program TEMPLATE created** - Diego should build upon this
 - [x] Handshake communication system implemented
 - [x] Documentation framework established
-- [ ] UR10 RoboDK station setup and testing by Sergio
-- [ ] UR5 RoboDK station setup and testing by Diego
+- [ ] UR10 RoboDK station setup and program implementation by Sergio
+- [ ] UR5 RoboDK station setup and program implementation by Diego
 - [ ] Handshake system reviewed by Felix
 - [ ] Integration testing in RoboDK completed
 - [ ] Final documentation completed
 
-## Notes
+## Important Notes
 
-- All robot programs use the official RoboDK API (`robolink` and `robodk` modules)
-- Programs are designed to run both within RoboDK and from command line
-- Targets and robot names in your RoboDK station must match the configuration files
-- Customize `ur10_config.py` and `ur5_config.py` to match your station setup
+- **These are TEMPLATES** - Team members should build upon them to implement complete functionality
+- Programs follow RoboDK patterns with `from robodk import robolink, robomath`
+- Simple, direct code structure without complex classes
+- Use `RDK.Item()` to get robots and targets
+- Configuration parameters are at the top of each file for easy adjustment
+- Placeholders (TODO comments) indicate where team members should add their specific logic
+
+## For Instructors/Reviewers
+
+The provided templates follow RoboDK best practices:
+- Use official RoboDK API (`robolink`, `robomath`)
+- Simple procedural structure easy to understand and modify
+- Clear helper functions for common operations
+- Handshake coordination integrated
+- Comments indicating where to add specific implementations
 
 ## License
 Team PR2-1-1 Project
