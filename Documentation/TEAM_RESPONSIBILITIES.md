@@ -4,7 +4,15 @@
 
 ### Team PR2-1-1 Members
 
-#### Sergio - UR10 Pick and Place Developer
+#### Enric - Team Leader, Documentation manager and Reviewer
+**Primary Responsibilities:**
+- Write and mantain the documentation
+- Review the whole porject daily in order to proper planning next moves
+- Guide the other project collaborators properly in order to fullfill milestone dates
+
+**Please contact him to resolve any question you have**
+
+#### Sergio - UR10 Pick and Place Developer + Conveyor Logic
 **Primary Responsibilities:**
 - Develop and maintain the UR10 robot program
 - Implement pick and place logic
@@ -27,7 +35,7 @@
 
 ---
 
-#### Diego - UR5 Box Folding Developer
+#### Diego - UR5 Box Folding Developer + Spawning Logic
 **Primary Responsibilities:**
 - Develop and maintain the UR5 robot program
 - Implement box folding sequence
