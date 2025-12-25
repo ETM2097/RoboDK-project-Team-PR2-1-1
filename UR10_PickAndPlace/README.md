@@ -1,4 +1,4 @@
-# UR10 Pick and Place Program - TEMPLATE
+# UR10 Pick and Place Program - TEMPLATE (You MUST create your own README)
 
 **Responsible:** Sergio
 
