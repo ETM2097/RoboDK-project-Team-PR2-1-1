@@ -76,14 +76,15 @@ class UR10PickAndPlace:
         # Pick object
         self.pick_object(self.config.PICK_POSITION)
         
-        # Wait for UR5 to be ready before placing
-        self.wait_for_ur5_ready()
-        
         # Place object
         self.place_object(self.config.PLACE_POSITION)
         
         # Signal completion
         self.signal_operation_complete()
+        
+        # Wait for UR5 to finish before next cycle
+        print("[UR10] Waiting for UR5 to finish folding...")
+        self.wait_for_ur5_ready()
         
         print("[UR10] Pick and place cycle completed")
 
