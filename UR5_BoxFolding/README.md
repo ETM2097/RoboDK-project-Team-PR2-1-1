@@ -1,4 +1,5 @@
 # UR5 Box Folding and Conveyor Program - TEMPLATE (You MUST create your own README)
+This is a templated created by Copilot, you should create your own README in order to fully comprehend your code. Visit [This Part](README.md#instructions-for-diego) for knowing your work.
 
 **Responsible:** Diego
 
@@ -80,15 +81,15 @@ robot = RDK.Item('UR5', robolink.ITEM_TYPE_ROBOT)
 
 1. **Setup your RoboDK station:**
    - Add UR5 robot named "UR5"
-   - Create all required targets listed above
-   - Add conveyor belt (optional)
-   - Add box objects to fold (optional)
+   - Create all required targets for correctly folding and placing the box
+   - Add conveyor belt targets and frame correctly
 
-2. **Customize the template:**
-   - Implement actual gripper control in `open_gripper()` and `close_gripper()`
-   - Modify the folding logic as needed for your box design
-   - Add actual folding tool actions in `fold_box()`
-   - Adjust configuration parameters (speeds, heights, cycles, timing)
+2. **Program the functionalities:**
+   - Implement actual griper functions, for setting and unsetting the tool (simulated)
+   - Program the robot movement and object tracking needed for the correct functionality
+   - Add logic for corretcly change visuals mid-action
+   - Adjust configuration parameters (speeds, heights, cycles, timing) acording to the tasks
+   - Set correctly the semaphores needed for the rest of the station.
 
 3. **Test your implementation:**
    - Test each folding step individually
@@ -99,56 +100,18 @@ robot = RDK.Item('UR5', robolink.ITEM_TYPE_ROBOT)
    - Document any modifications in `/Documentation/IMPROVEMENTS.md`
    - Update this README if you change the structure significantly
 
-## Configuration
-
-At the top of `ur5_program.py`, you can adjust:
-
-```python
-SAFE_HEIGHT_OFFSET = 100.0  # mm above folding/conveyor positions
-FOLD_PAUSE_TIME = 0.5       # seconds to pause at each folding position
-CONVEYOR_WAIT_TIME = 2.0    # seconds to wait after placing on conveyor
-MAX_CYCLES = 10             # Number of box folding cycles
-SPEED_FACTOR = 1.0          # Speed multiplier (0.1 to 1.0)
-```
-
-## Folding Sequence
-
-The template implements a 4-step folding sequence:
-1. **Fold bottom flap** (UR5_Fold1)
-2. **Fold left side** (UR5_Fold2)
-3. **Fold right side** (UR5_Fold3)
-4. **Fold top flap and seal** (UR5_Fold4)
-
-Each step moves to the target, pauses briefly, then continues to the next step.
-
-## Handshake Coordination
-
-The template uses handshake signals to coordinate with UR10:
-- Waits for UR10's `COMPLETE` before starting folding
-- Sends `READY` after folding is complete
-- This ensures proper synchronization between robots
-
 ## Example Workflow
 
-1. UR5 waits for UR10 COMPLETE signal
-2. UR5 folds box (4 steps)
-3. UR5 signals READY
-4. UR5 places box on conveyor
-5. Repeat
+1. UR5 waits for boxes being aviable or there is place on the conveyor
+2. UR5 folds box
+3. UR5 places the box in the conveyor setting READY for the conveyor to move (can be just a continuously moving conveyor for simpler logic)
+4. UR5 signals READY when the box gets to place frame
+5. (Optional) Extrapolate the UR5-UR10 communication with it's own python program for box tracking ASK FELIX
+7. Repeat
 
 ## Troubleshooting
 
-**Robot not found:**
-- Make sure robot is named exactly "UR5" in your station
-
-**Targets not found:**
-- Create all required targets in your station
-- Check target names match exactly (case-sensitive)
-
-**Program doesn't move robot:**
-- Check if targets are reachable
-- Verify no collisions in station
-- Check robot is not in error state
+Here you will post regular or recurring problems with your code
 
 ## Need Help?
 
