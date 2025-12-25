@@ -100,18 +100,15 @@ Each component can be tested independently:
 - **Handshake System:** `python Handshake/handshake.py`
 
 ## Future Enhancements
-1. Add RoboDK integration for actual robot control
-2. Implement error recovery mechanisms
-3. Add logging system for operation history
-4. Create visualization dashboard
-5. Add more sophisticated synchronization patterns
-6. Implement collision detection and avoidance
+1. Implement error recovery mechanisms
+2. Add more sophisticated synchronization patterns, and timeouts
+3. Implement collision detection and avoidance for protection
 
 ## Contact Information
-- **Project Leader:** Enric
+- **Project Manager:** Enric
 - **UR10 Developer:** Sergio
 - **UR5 Developer:** Diego
-- **Integration Reviewer:** Felix
+- **Integration Implementer:** Felix
 
 ## Version History
 - **v1.0** (December 25, 2024) - Initial project setup with basic structure and handshake protocol
