@@ -16,14 +16,15 @@ The protocol.py provides:
 ## Integration
 
 ### UR5.py
-When moving the belt, you need to check two sensors: `sensor2` and `sensor3`. If both sensors are ON, the conveyor belt cannot move at this moment. If `sensor2` is ON, you cannot move the conveyor belt. If `sensor1` is ON, the robot cannot move at this moment.
+When moving the belt, we need to check two sensors: `sensor2` and `sensor3`. If both sensors are ON, the conveyor belt cannot move at this moment. If `sensor2` is ON, we cannot move the conveyor belt. If `sensor1` is ON, the robot cannot move at this moment.
 
-When moving the box from the first conveyor belt to the second one, you need to set `sensor2` to OFF.
+When moving the box from the first conveyor belt to the second one, we need to set `sensor2` to OFF.
 
 ### UR10.py
-When placing the objects into the box, you need to check `sensor3`. If this sensor is ON, you can move the robot, but the conveyor belt cannot move. When the robot finishes the current task, you need to set `sensor4` to OFF and move the conveyor belt.
+When placing the objects into the box, we need to check `sensor3`. If this sensor is ON, we can move the robot, but the conveyor belt cannot move. When the robot finishes the current task, we need to set `sensor3` to OFF and move the conveyor belt.
 
-If `sensor5` is ON, you cannot move the belt until you move the box from the second conveyor belt to the third one.
+If `sensor5` is ON, we cannot move the belt until we move the box from the second conveyor belt to the third one.
 
+And we don't touch `sensor4` because it works.
 
 
