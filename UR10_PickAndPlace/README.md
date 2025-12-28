@@ -373,15 +373,18 @@ In addition, the option of using a different robot was evaluated, but it was dec
 - **Tool:** OnRobot VG10 Vacuum Gripper
 - **Programming Language:** Python
 - **Software Platform:** RoboDK
-- **Key Parameters:**
+
+**Key Parameters:**
 - Foam height: 10.0 mm
   - Number of foam samples to be collected: Variable depending on the method (16 or 32 bottles)
-- **Algorithms:**
+
+**Algorithms:**
 - **Pick and place** functions to manage the logic of picking up and placing both bottles and foam.
   - **Foam regeneration** function to ensure continuous availability of parts for the robot.
 - Movement function with **offset on the Z axis** to facilitate robot movements without repeating code.
 - Function in the [TemplateCreator.py](TemplateCreator.py) file to create foam templates.
-- **Design Decisions:**
+
+**Design Decisions:**
 - Use of loops and conditional structures to manage the different phases of the pick and place process.
 - Implementation of a communication system based on input/output signals to coordinate the robot with the conveyor belt.
 - Modularization of the code using auxiliary functions to improve the readability and maintainability of the program.
