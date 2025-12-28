@@ -331,7 +331,7 @@ The UR10 robot monitors this parameter in a loop, waiting until its value is 1 b
 ```python
 # ALERT FOR ROBOT
 RDK.setParam('IO_NombrePieza', oldest_part.Name())
-RDK.setParam('IO_PiezaLista', 1) # GREEN TRAFFIC LIGHT
+RDK.setParam('IO_PiezaLista', 1) # GREEN SEMAPHORE
 RDK.RunProgram('UR10')
 
 oldest_part.sent_signal = True
@@ -342,7 +342,7 @@ while oldest_part.Valid() and oldest_part.Parent().Name() == FRAME_MOVER_NAME:
     time.sleep(0.05)
 
 print("Cinta: Pieza recogida. Reiniciando semáforo.")
-RDK.setParam('IO_PiezaLista', 0) # RED TRAFFIC LIGHT
+RDK.setParam('IO_PiezaLista', 0) # RED SEMAPHORE
 active_parts.pop(0)
 ```
 
