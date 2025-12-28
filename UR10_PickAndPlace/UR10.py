@@ -1,5 +1,3 @@
-
-
 from robodk import robolink, robomath
 import time
 import math
@@ -95,7 +93,6 @@ def pickAndPlace16(contador_espumas):
             # Soltar espuma
             if item_espuma and item_espuma.Valid():
                 item_espuma.setParentStatic(RDK.Item('Station'))
-                # item_espuma.Delete() # Borramos la copia
                 
             # Volver a zona preplace
             robot.MoveL(t_preplace_espuma)
@@ -140,7 +137,6 @@ def pickAndPlace16(contador_espumas):
             
             if item_botella.Valid():
                 item_botella.setParentStatic(RDK.Item('Station'))
-                # item_botella.Delete()
                 
             robot.MoveL(t_preplace_bot)
             
