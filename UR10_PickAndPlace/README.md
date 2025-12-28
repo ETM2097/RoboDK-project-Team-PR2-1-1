@@ -64,7 +64,7 @@ contador_espumas = 1 # How many foam pieces have to be picked
 objects = [] # List to store all program pieces (bottles and foams)
 ```
 
-- **Funciones auxiliares:** A function is defined `mover_offset_z(target_item, offset_z)` which allows the robot to be moved along the Z axis a specified distance from the position of a specific target.
+- **Auxiliary functions:** A function is defined `mover_offset_z(target_item, offset_z)` which allows the robot to be moved along the Z axis a specified distance from the position of a specific target.
   <br>The purpose of this function is to avoid repeating code throughout the program.
 
 ```python
@@ -104,7 +104,7 @@ def regenerar_espuma(numero):
 <br> <i>Both functions follow a similar structure, differing in the cycles and the positions in which the bottles are placed.</i>
 
 <details open>
-<summary>Función auxiliar para pick and place de 16 botellas [Código en Python]</summary>
+<summary>Auxiliary function for pick and place of 16 bottles [Python Code]</summary>
 
 ```python
 def pickAndPlace16(contador_espumas):
@@ -412,4 +412,3 @@ In addition, RoboDK offers many functionalities, but it is believed that **ROS (
 - [RoboDK Documentation](https://robodk.com/doc/en/)
 - [UR10 Robot Specifications](https://www.universal-robots.com/products/ur10-robot/)
 - [Python Docs](https://www.python.org/doc/)
-
