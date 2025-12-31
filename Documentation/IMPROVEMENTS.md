@@ -32,7 +32,7 @@ When you make improvements or changes:
 - UR10.py: The best optimization has been sought when performing the different movements that the robot, depending on the program to be executed, would perform pick and place movements or others.
 - conveyorSpawn.py: The conveyor belt must function correctly in order to move each of the bottle packs correctly to the UR10 pick area.
 
-**Testing:**
+**Testing:** <br>
 In order to test the correct functioning of the bottles, RoboDK's own simulator was used, checking step by step each of the movements that both the robot and the conveyor belt had to make. Likewise, while each of the scripts was being programmed, the entire code was debugged in search of errors in order to resolve them and ensure the correct functioning of each of the programs.
 
 **Results:**
