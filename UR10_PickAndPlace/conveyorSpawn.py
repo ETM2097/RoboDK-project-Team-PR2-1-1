@@ -115,7 +115,6 @@ while True:
                 # AVISO AL ROBOT
                 RDK.setParam('IO_NombrePieza', oldest_part.Name())
                 RDK.setParam('IO_PiezaLista', 1) # SEMÁFORO VERDE
-                RDK.RunProgram('UR10')
                 
                 oldest_part.sent_signal = True
                 oldest_part.Recolor([0, 1, 0, 1]) # VISUAL
