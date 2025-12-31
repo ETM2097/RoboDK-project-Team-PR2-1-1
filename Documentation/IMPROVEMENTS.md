@@ -17,19 +17,26 @@ When you make improvements or changes:
 
 ### [Date] - [Description]
 **Files Modified:**
-- List files changed
+- UR10.py
+- conveyorSpawn.py
+- TemplateCreator.py
+- README.md
 
 **Changes Made:**
-- Describe what was changed
+- UR10.py: Complete implementation of each of the movements to be performed by the robot and its correct implementation and connection to the conveyor belt that sends the signal to give way to it. Some errors that occasionally caused the connection between the robot and the conveyor belt to fail have been fixed.
+- conveyorSpawn.py: Infinite generation of products to be picked up (bottles) by the UR10, as well as the correct operation of the conveyor belt to ensure that the desired frame is reached for subsequent picking by the robot.
+- TemplateCreator.py: Configuration required to ensure infinite foam regeneration.
+- README.md: Complete description of the overall operation and other noteworthy aspects of this part of the project.
 
 **Reason:**
-- Explain why the change was made
+- UR10.py: The best optimization has been sought when performing the different movements that the robot, depending on the program to be executed, would perform pick and place movements or others.
+- conveyorSpawn.py: The conveyor belt must function correctly in order to move each of the bottle packs correctly to the UR10 pick area.
 
 **Testing:**
-- Describe how the change was tested
+In order to test the correct functioning of the bottles, RoboDK's own simulator was used, checking step by step each of the movements that both the robot and the conveyor belt had to make. Likewise, while each of the scripts was being programmed, the entire code was debugged in search of errors in order to resolve them and ensure the correct functioning of each of the programs.
 
 **Results:**
-- Report the outcome
+- The results were completely successful. Although there were some errors, they were easily located and resolved in time for the delivery of this part of the project.
 
 ---
 
