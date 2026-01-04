@@ -183,7 +183,6 @@ def pickAndPlace32(contador_espumas):
             
             if item_espuma and item_espuma.Valid():
                 item_espuma.setParentStatic(RDK.Item('Station'))
-                # item_espuma.Delete() # Borramos la copia
             
             robot.MoveL(t_preplace_espuma)
             contador_espumas += 1
@@ -231,7 +230,6 @@ def pickAndPlace32(contador_espumas):
             
             if item_botella.Valid():
                 item_botella.setParentStatic(RDK.Item('Station'))
-                # item_botella.Delete()
             robot.MoveL(t_preplace_bot)
         # fin del if
         
