@@ -192,7 +192,7 @@ In order to test the correct functioning of the bottles, RoboDK's own simulator 
 | Team Member | Entries | Last Update |
 |-------------|---------|-------------|
 | Enric | 1 | 26/12/25 |
-| Sergio | 0 | - |
+| Sergio | 1 | 26/12/25 |
 | Diego | 0 | - |
 | Felix | 0 | - |
 
